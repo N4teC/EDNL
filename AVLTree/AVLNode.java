@@ -1,4 +1,4 @@
-package EDNL.AVLTree;
+package AVLTree;
 
 import BinarySearchTree.Node;
 
