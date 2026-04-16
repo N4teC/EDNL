@@ -7,7 +7,7 @@ public class TesteRB {
         Scanner scanner = new Scanner(System.in);
         RBTree<Integer> tree = new RBTree<>();
 
-        System.out.println("=== Teste da Árvore Rubro-Negra O(log n) ===");
+        System.out.println("=== Teste da Árvore Rubro-Negra ===");
         System.out.println("Inserindo valores iniciais: 10, 5, 15, 2, 8, 22");
         System.out.println("Legenda das cores: [R] = Red (Vermelho), [B] = Black (Preto)");
 
