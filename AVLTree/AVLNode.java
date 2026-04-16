@@ -11,4 +11,20 @@ public class AVLNode<T extends Comparable<? super T>> extends Node<T> {
         this.height = 1; // New nodes are initially added as leaf nodes
         this.balanceFactor = 0; // Balance factor is initially 0
     }
+
+    public int getBalanceFactor() {
+        return balanceFactor;
+    }
+
+    public void setBalanceFactor(int balanceFactor) {
+        this.balanceFactor = balanceFactor;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
 }
