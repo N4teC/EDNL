@@ -108,9 +108,13 @@ public class AVLTree<
 
     // Balancing methods
     private void update(AVLNode<T> node) {
-        // Recalculates height based on the tallest child, plus 1 for the current node
+        // Essential mechanism of AVL: Each node keeps track of the "height" of its branch.
+        // Calculates the height based on the tallest child line (Left vs Right), plus 1 for the current node.
         node.height = Math.max(h(cast(node.getLeftChild())), h(cast(node.getRightChild()))) + 1;
-        node.balanceFactor = bf(node); // Updates the balance factor (Left height - Right height)
+        
+        // Updates the "Balance Factor": Math formula is Left Subtree Height - Right Subtree Height
+        // If BF is > 1: Leaning too far left. If BF is < -1: Leaning too far right.
+        node.balanceFactor = bf(node); 
     }
 
     private AVLNode<T> rotateLeft(AVLNode<T> node) {
@@ -191,14 +195,20 @@ public class AVLTree<
     }
 
     private AVLNode<T> rotateDoubleRight(AVLNode<T> node) {
-        // Double Right Rotation 
+        // Double Right Rotation: Used for a "Left-Right Case" (Dog-leg curve).
+        // Step 1: Perform a Left Rotation on the heavy left child to straighten the curve out.
         rotateLeft(cast(node.getLeftChild()));
+        
+        // Step 2: Now that it's a straight "Left-Left Case", do a traditional Right Rotation on the root.
         return rotateRight(node);
     }
 
     private AVLNode<T> rotateDoubleLeft(AVLNode<T> node) {
-        // Double Left Rotation 
+        // Double Left Rotation: Used for a "Right-Left Case" (Dog-leg curve).
+        // Step 1: Perform a Right Rotation on the heavy right child to straighten the curve out.
         rotateRight(cast(node.getRightChild()));
+        
+        // Step 2: Now that it's a straight "Right-Right Case", do a traditional Left Rotation on the root.
         return rotateLeft(node);
     }
 

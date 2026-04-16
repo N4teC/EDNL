@@ -49,10 +49,10 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
     }
 
     // Remove method
-
     public void remove(T key) {
         root = removeRecursive(root, key);
 
+        // Ensure the new root (if any) doesn't hold an old parent reference
         if (root != null) {
             root.setParent(null);
         }
@@ -60,50 +60,62 @@ public class BinarySearchTree<T extends Comparable<? super T>> {
 
     private Node<T> removeRecursive(Node<T> current, T value) {
         if (current == null) {
-            return null; // Key not found
+            return null; // Base case: end of branch, key not found
         }
 
-        T currentValue = current.getObject();
+        T currentValue = current.getObject(); // Read current node value
 
+        // Step 1: Navigate the tree to find the target node
         if (value.compareTo(currentValue) < 0) {
-            // Go left
+            // Target is smaller, go to the left subtree
             Node<T> leftChild = current.getLeftChild();
-            Node<T> newLeftChild = removeRecursive(leftChild, value); // Recur on the left child
-            current.setLeftChild(newLeftChild);
+            Node<T> newLeftChild = removeRecursive(leftChild, value); 
+            current.setLeftChild(newLeftChild); // Re-link the modified left subtree
             if (newLeftChild != null) {
-                newLeftChild.setParent(current); // Update parent reference
+                newLeftChild.setParent(current); // Keep bidirectional continuity 
             }
         } else if (value.compareTo(currentValue) > 0) {
-            // Go right
+            // Target is explicitly bigger, go to the right subtree
             Node<T> rightChild = current.getRightChild();
-            Node<T> newRightChild = removeRecursive(rightChild, value); // Recur on the right child
-            current.setRightChild(newRightChild);
+            Node<T> newRightChild = removeRecursive(rightChild, value); 
+            current.setRightChild(newRightChild); // Re-link the modified right subtree 
             if (newRightChild != null) {
-                newRightChild.setParent(current); // Update parent reference
+                newRightChild.setParent(current); // Keep bidirectional continuity 
             }
         } else {
-            // Node to delete found
+            // Step 2: Target node found! Proceed with removal operations
+            
+            // Case 1: Node is a Leaf (no children)
             if (current.getLeftChild() == null && current.getRightChild() == null) {
-                return null; // Node has no children, simply remove it
-            } else if (current.getLeftChild() == null) {
-                // Node has only right child
-                return current.getRightChild(); // Replace it with the right child
-            } else if (current.getRightChild() == null) {
-                // Node has only left child
-                return current.getLeftChild(); // Replace it with the left child
-            } else {
-                // Node has two children, replace it with the smallest value in the right subtree
+                return null; // Returning null unlinks this node from its parent
+            } 
+            // Case 2A: Node only has a Right child
+            else if (current.getLeftChild() == null) {
+                return current.getRightChild(); // Returning right child unlinks current, shifting the child up
+            } 
+            // Case 2B: Node only has a Left child
+            else if (current.getRightChild() == null) {
+                return current.getLeftChild(); // Returning left child unlinks current, shifting the child up
+            } 
+            // Case 3: Node has both Left and Right children
+            else {
+                // To maintain BST order, we replace this node's value with the "In-Order Successor"
+                // The successor is the smallest value in the right subtree
                 Node<T> rightChild = current.getRightChild();
                 T minValue = findMinValue(rightChild);
-                current.setElement(minValue); // Replace current node's value with the minimum value
-                Node<T> newRightChild = removeRecursive(rightChild, minValue); // Remove the duplicate value from the right subtree
+                
+                // Overwrite the current node's value with the successor's value
+                current.setElement(minValue); 
+                
+                // Recursively delete the successor node from the right subtree
+                Node<T> newRightChild = removeRecursive(rightChild, minValue); 
                 current.setRightChild(newRightChild);
                 if (newRightChild != null) {
-                    newRightChild.setParent(current); // Update parent reference
+                    newRightChild.setParent(current); // Maintain parent integrity
                 }
             }
         }
-        return current;
+        return current; // Return the current (possibly unmodified) sub-tree root upwards
     }
 
     private T findMinValue(Node<T> node) {
