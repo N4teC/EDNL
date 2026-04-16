@@ -190,6 +190,18 @@ public class AVLTree<
         return y; // The new root of the rotated structure
     }
 
+    private AVLNode<T> rotateDoubleRight(AVLNode<T> node) {
+        // Double Right Rotation 
+        rotateLeft(cast(node.getLeftChild()));
+        return rotateRight(node);
+    }
+
+    private AVLNode<T> rotateDoubleLeft(AVLNode<T> node) {
+        // Double Left Rotation 
+        rotateRight(cast(node.getRightChild()));
+        return rotateLeft(node);
+    }
+
     private AVLNode<T> rebalance(AVLNode<T> node) {
         update(node); // Recalculate height/balance before performing evaluations
         int balanceFactor = node.balanceFactor;
@@ -197,7 +209,7 @@ public class AVLTree<
         if (balanceFactor > 1) {  // Left heavy: the left subtree is unbalanced
             if (bf(cast(node.getLeftChild())) < 0) {
                 // Left-Right Unbalance (Dog-leg): child leans completely right
-                rotateLeft(cast(node.getLeftChild())); // Do a partial left rotation on the child
+                return rotateDoubleRight(node); // Use double rotation
             }
             // Left-Left Unbalance: Now standard, perform a simple right rotation
             return rotateRight(node); 
@@ -206,7 +218,7 @@ public class AVLTree<
         if (balanceFactor < -1) { // Right heavy: the right subtree is unbalanced
             if (bf(cast(node.getRightChild())) > 0) {
                 // Right-Left Unbalance (Dog-leg): child leans completely left
-                rotateRight(cast(node.getRightChild())); // Do a partial right rotation on the child
+                return rotateDoubleLeft(node); // Use double rotation
             }
             // Right-Right Unbalance: Now standard, perform a simple left rotation
             return rotateLeft(node); 
@@ -280,10 +292,6 @@ public class AVLTree<
         return (node == null)
                 ? 0
                 : h(cast(node.getLeftChild())) - h(cast(node.getRightChild())); // Balance factor is left height - right height
-    }
-
-    private AVLNode<T> newNode(T key, Node<T> parent) {
-        return new AVLNode<>(key, parent);
     }
 
     private void printSpaces(int n) {
